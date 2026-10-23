@@ -7,8 +7,7 @@ function copy(t){const done=()=>toast('Copied');try{navigator.clipboard.writeTex
 /* theme */
 const root=document.documentElement;
 root.dataset.theme=S.get('fp_theme',matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
-function toggleTheme(){root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';S.set('fp_theme',root.dataset.theme);const b=$('#th');if(b)b.textContent=root.dataset.theme==='dark'?'☀':'☾'}
-function tiltInit(){if(!matchMedia('(hover:hover)').matches)return;document.querySelectorAll('.tilt').forEach(e=>{e.onmousemove=ev=>{const r=e.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width-.5,y=(ev.clientY-r.top)/r.height-.5;e.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg)`};e.onmouseleave=()=>e.style.transform=''})}
+function toggleTheme(){root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';S.set('fp_theme',root.dataset.theme);const b=$('#th');if(b)b.innerHTML=themeIc()}
 const LOGO="assets/logo.png";
 const logo=`<div class="logo"><img class="lg" src="${LOGO}" alt="FARVO logo"><span>FARVO Prompt</span></div>`;
 const footer=(c='')=>`<footer class="foot ${c}"><div class="fl"><a href="#/about">About</a><a href="#/faq">FAQ</a><a href="#/reviews">Reviews</a><a href="#/contact">Contact</a><a href="#/privacy">Privacy</a><a href="#/terms">Terms</a></div><div style="margin-top:8px">Website by <b>FARVO Digital Company</b></div><div style="margin-top:8px"><a href="https://farvodigital.netlify.app" target="_blank" rel="noopener">farvodigital.netlify.app</a><a href="tel:+94773042864">+94 077 304 2864</a><a href="https://www.linkedin.com/search/results/companies/?keywords=Farvo%20Digital%20Company" target="_blank" rel="noopener">LinkedIn: Farvo Digital Company</a></div><div style="margin-top:8px">© 2026 FARVO Digital Company</div></footer>`;
@@ -16,19 +15,36 @@ const footer=(c='')=>`<footer class="foot ${c}"><div class="fl"><a href="#/about
 /* ---------- AUTH ---------- */
 let mode='login',resetEmail='';
 const fld=(id,l,t='text',ph='',ac='')=>`<label for="${id}">${l}</label><input id="${id}" type="${t}" placeholder="${ph}" autocomplete="${ac}"><span class="err" id="e_${id}"></span>`;
+const IC={
+ gen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16l.7 1.8L21.5 18.5l-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></svg>',
+ img:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 9"/></svg>',
+ enh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l10-10"/><path d="M13 5l6 6"/><path d="M14 4l1-1 6 6-1 1z"/></svg>',
+ tpl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+ lib:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>',
+ acc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>',
+ sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>',
+ moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg>',
+ out:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3"/><path d="M10 8l-4 4 4 4M6 12h10"/></svg>',
+ copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>',
+ up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 20h16"/></svg>'};
+const themeIc=()=>root.dataset.theme==='dark'?IC.sun:IC.moon;
+
 function showAuth(){
- const T={login:['Welcome back','Log in to generate prompts.'],signup:['Create your account','Sign up to start generating prompts.'],forgot:['Reset password','Confirm your email and phone number.'],reset:['Set new password','Choose a new password for your account.']}[mode];
+ const T={login:['Welcome back','Log in to see your prompts.'],signup:['Create your free account','It takes less than a minute.'],forgot:['Reset your password','Enter the email and phone number you signed up with.'],reset:['Choose a new password','Use at least 8 characters with letters and numbers.']}[mode];
  const body={
- login:fld('email','Email','email','you@example.com','email')+fld('pw','Password','password','Your password','current-password')+`<button class="btn full" id="go">Log in</button><p class="mut" style="text-align:center"><a href="#" data-m="forgot">Forgot password?</a> · <a href="#" data-m="signup">Create account</a></p>`,
- signup:fld('name','Full name','text','Your full name','name')+fld('phone','Phone number','tel','+94 77 123 4567','tel')+fld('email','Email','email','you@example.com','email')+fld('pw','Password','password','Min 8 characters, letters and numbers','new-password')+fld('pw2','Confirm password','password','Re-enter password','new-password')+`<button class="btn full" id="go">Create account</button><p class="mut" style="text-align:center">Already registered? <a href="#" data-m="login">Log in</a></p>`,
- forgot:fld('email','Email','email','you@example.com','email')+fld('phone','Phone number used at signup','tel','+94 77 123 4567','tel')+`<button class="btn full" id="go">Verify account</button><p style="text-align:center"><a href="#" data-m="login">Back to log in</a></p>`,
- reset:fld('pw','New password','password','Min 8 characters','new-password')+fld('pw2','Confirm new password','password','Re-enter password','new-password')+`<button class="btn full" id="go">Save new password</button>`}[mode];
- $('#root').innerHTML=`<div id="auth"><section class="hero">${logo}<h1>Tell FARVO what you need. FARVO builds the prompt.</h1><p class="mut">Type in English, Tamil, Sinhala, Hindi or Tanglish. Get a ready-to-paste prompt for ChatGPT, Gemini or Claude.</p><div class="scene"><img class="coin" src="${LOGO}" alt="FARVO Digital Company logo"></div></section>
- <section class="card tilt"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">${T[0]}</h2><button class="ic" id="th" aria-label="Toggle theme">${root.dataset.theme==='dark'?'☀':'☾'}</button></div><p class="mut" style="margin-top:4px">${T[1]}</p>${body}</section></div>${footer()}`;
+ login:fld('email','Email','email','you@example.com','email')+fld('pw','Password','password','Your password','current-password')+`<button class="btn full" id="go" style="margin-top:8px">Log in</button><p class="alt"><a href="#" data-m="forgot">Forgot password?</a></p>`,
+ signup:fld('name','Full name','text','Your full name','name')+fld('phone','Phone number','tel','+94 77 123 4567','tel')+fld('email','Email','email','you@example.com','email')+fld('pw','Password','password','8+ characters, letters and numbers','new-password')+fld('pw2','Confirm password','password','Type the password again','new-password')+`<button class="btn full" id="go" style="margin-top:8px">Create account</button>`,
+ forgot:fld('email','Email','email','you@example.com','email')+fld('phone','Phone number used at signup','tel','+94 77 123 4567','tel')+`<button class="btn full" id="go" style="margin-top:8px">Continue</button><p class="alt"><a href="#" data-m="login">Back to log in</a></p>`,
+ reset:fld('pw','New password','password','8+ characters','new-password')+fld('pw2','Confirm new password','password','Type it again','new-password')+`<button class="btn full" id="go" style="margin-top:8px">Save new password</button>`}[mode];
+ const seg=(mode==='login'||mode==='signup')?`<div class="seg" role="tablist"><button data-m="login" class="${mode==='login'?'on':''}" role="tab">Log in</button><button data-m="signup" class="${mode==='signup'?'on':''}" role="tab">Sign up</button></div>`:'';
+ $('#root').innerHTML=`<div class="top">${logo}<span class="sp"></span><button class="ic" id="th" aria-label="Switch light or dark theme">${themeIc()}</button></div>
+ <div id="auth"><section class="hero"><h1>Tell us what you need. Get a prompt that works.</h1><p class="mut">Write in English, Tamil, Sinhala, Hindi or Tanglish. We turn it into a ready-to-paste prompt for ChatGPT, Gemini or Claude.</p>
+ <ol class="how"><li><b>1</b><div>Describe your idea<small>Just a few words in your own language</small></div></li><li><b>2</b><div>Choose how detailed it should be<small>Short, clear sections, or everything</small></div></li><li><b>3</b><div>Copy and paste into your AI tool<small>Save it to your library for later</small></div></li></ol></section>
+ <section class="card">${seg}<h2>${T[0]}</h2><p class="mut" style="margin-top:0">${T[1]}</p>${body}</section></div>${footer()}`;
  $('#th').onclick=toggleTheme;
  document.querySelectorAll('[data-m]').forEach(a=>a.onclick=e=>{e.preventDefault();mode=a.dataset.m;showAuth()});
  document.querySelectorAll('#auth input').forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')$('#go').click()});
- $('#go').onclick=submitAuth;tiltInit();
+ $('#go').onclick=submitAuth;
 }
 const v=id=>($('#'+id)?.value||'').trim();
 function bad(id,m){$('#e_'+id).textContent=m;return 1}
@@ -99,48 +115,55 @@ const me=()=>S.get('fp_users',[]).find(u=>u.email===S.get('fp_session'));
 const libKey=()=>'fp_lib_'+S.get('fp_session');
 function showApp(){
  const u=me();if(!u){S.set('fp_session','');return showAuth()}
- const items=[['gen','✨','Generate'],['img','🖼','Image'],['enh','🔧','Enhance'],['tpl','📚','Templates'],['lib','📁','Library'],['acc','👤','Account']];
- $('#root').innerHTML=`<div class="top">${logo}<span class="sp"></span><span class="mut" style="font-size:13px">Hi, ${esc(u.name.split(' ')[0])}</span><button class="ic" id="th" aria-label="Toggle theme">${root.dataset.theme==='dark'?'☀':'☾'}</button><button class="ic" id="lo" aria-label="Log out">⎋</button></div>
- <main><div class="tabs dtabs">${items.map(i=>`<button class="chip ${tab===i[0]?'on':''}" data-t="${i[0]}">${i[1]} ${i[2]}</button>`).join('')}</div><div id="view"></div></main>${footer('app')}
- <nav class="nav">${items.map(i=>`<button class="${tab===i[0]?'on':''}" data-t="${i[0]}">${i[1]}<br>${i[2]}</button>`).join('')}</nav>`;
+ const items=[['gen','Create prompt'],['img','From image'],['enh','Improve prompt'],['tpl','Templates'],['lib','My library'],['acc','Account']];
+ const short={gen:'Create',img:'Image',enh:'Improve',tpl:'Templates',lib:'Library',acc:'Account'};
+ $('#root').innerHTML=`<div class="top">${logo}<span class="sp"></span><span class="hi">Hi, ${esc(u.name.split(' ')[0])}</span><button class="ic" id="th" aria-label="Switch light or dark theme">${themeIc()}</button><button class="ic" id="lo" aria-label="Log out" title="Log out">${IC.out}</button></div>
+ <div class="shell"><nav class="side" aria-label="Main">${items.map(i=>`<button data-t="${i[0]}" class="${tab===i[0]?'on':''}" ${tab===i[0]?'aria-current="page"':''}>${IC[i[0]]}${i[1]}</button>`).join('')}</nav><main id="view"></main></div>${footer('app')}
+ <nav class="nav" aria-label="Main">${items.map(i=>`<button data-t="${i[0]}" class="${tab===i[0]?'on':''}">${IC[i[0]]}${short[i[0]]}</button>`).join('')}</nav>`;
  $('#th').onclick=toggleTheme;$('#lo').onclick=()=>{S.set('fp_session','');mode='login';cur=null;showAuth()};
  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{curs[tab]=cur;tab=b.dataset.t;cur=curs[tab]||null;showApp();scrollTo(0,0)});
- ({gen:genView,img:imgView,enh:enhView,tpl:tplView,lib:libView,acc:accView})[tab]();tiltInit();
+ ({gen:genView,img:imgView,enh:enhView,tpl:tplView,lib:libView,acc:accView})[tab]();
 }
 let gm='Auto';
+const MODES=[['Auto','Auto','We pick for you'],['Simple','Simple','One short paragraph'],['Professional','Clear','Neat sections'],['Advanced','Detailed','Full structure'],['Expert','Expert','Most detail']];
+const modePick=()=>`<div class="opts" id="modes">${MODES.map(m=>`<button type="button" class="opt ${gm===m[0]?'on':''}" data-m="${m[0]}" aria-pressed="${gm===m[0]}"><b>${m[1]}</b><span>${m[2]}</span></button>`).join('')}</div>`;
+function bindModes(){document.querySelectorAll('#modes .opt').forEach(b=>b.onclick=()=>{gm=b.dataset.m;document.querySelectorAll('#modes .opt').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)})})}
+const head=(t,p)=>`<div class="page-head"><h1>${t}</h1><p>${p}</p></div>`;
 function genView(){
- $('#view').innerHTML=`<div class="grid"><div class="card tilt"><h2 style="margin-top:0">What do you want AI to help you create?</h2>
- <textarea id="inp" placeholder="Tell me what you need in your own words…"></textarea><span class="err" id="e_inp"></span>
- <div class="tabs" id="modes">${['Auto','Simple','Professional','Advanced','Expert'].map(m=>`<button class="chip ${gm===m?'on':''}" data-m="${m}">${m}</button>`).join('')}</div>
- <label for="lg">Language</label><select id="lg">${['Auto','English','Tamil','Sinhala','Hindi'].map(x=>`<option>${x}</option>`).join('')}</select>
- <div class="tabs">${['I need exam notes for database normalization','Build a food ordering system with PHP and MySQL','Modern poster for my software project','Professional email asking for an internship'].map(x=>`<button class="chip" data-ex="${esc(x)}">${esc(x)}</button>`).join('')}</div>
- <button class="btn full" id="gen">✨ Generate Prompt</button></div><div id="out"></div></div>`;
- document.querySelectorAll('#modes .chip').forEach(b=>b.onclick=()=>{gm=b.dataset.m;document.querySelectorAll('#modes .chip').forEach(x=>x.classList.toggle('on',x===b))});
- document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{$('#inp').value=b.dataset.ex});
- $('#gen').onclick=()=>{const t=v('inp');if(t.length<5)return bad('inp','Describe what you need in a few words.');$('#e_inp').textContent='';cur=buildPrompt(t,gm,$('#lg').value);cur.src=t;logHist();renderOut()};
- $('#out').innerHTML=scene3d();tilt3d();const tp=S.get('fp_tpl','');if(tp){$('#inp').value=tp;S.set('fp_tpl','')}if(cur&&!String(cur.c).startsWith('Image'))renderOut();
+ $('#view').innerHTML=head('Create a prompt','Say what you need in your own words. We will write the prompt for you.')+`<div class="grid"><div class="card"><div class="step"><b>1</b><span>What do you need?</span></div>
+ <textarea id="inp" aria-label="Describe what you need" placeholder="Example: enakku database normalization exam notes venum"></textarea><span class="err" id="e_inp"></span>
+ <p class="hint">Not sure what to write? Tap an example:</p><div class="chips" style="margin-top:8px">${['I need exam notes for database normalization','Build a food ordering system with PHP and MySQL','Modern poster for my software project','Professional email asking for an internship'].map(x=>`<button type="button" class="chip ex" data-ex="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+ <div class="step stepgap"><b>2</b><span>How detailed should it be?</span></div>${modePick()}
+ <div class="step stepgap"><b>3</b><span>Which language should the AI reply in?</span></div>
+ <select id="lg" aria-label="Reply language">${['Auto','English','Tamil','Sinhala','Hindi'].map(x=>`<option value="${x}">${x==='Auto'?'Auto (same as what I typed)':x}</option>`).join('')}</select>
+ <button class="btn full" id="gen" style="margin-top:24px">${IC.gen} Create my prompt</button></div><div id="out"></div></div>`;
+ bindModes();
+ document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{$('#inp').value=b.dataset.ex;$('#inp').focus()});
+ $('#gen').onclick=()=>{const t=v('inp');if(t.length<5)return bad('inp','Write a few words about what you need.');$('#e_inp').textContent='';cur=buildPrompt(t,gm,$('#lg').value);cur.src=t;logHist();renderOut()};
+ $('#out').innerHTML=emptyOut('Your prompt will appear here');const tp=S.get('fp_tpl','');if(tp){$('#inp').value=tp;S.set('fp_tpl','')}if(cur&&!String(cur.c).startsWith('Image'))renderOut();
 }
 function renderOut(){
  const txt=flat(cur.sections);
- $('#out').innerHTML=`<div class="card tilt"><div class="mut" style="font-size:12px">Detected: ${esc(cur.c)}</div><h3 style="margin:4px 0 8px">Generated Prompt</h3>
+ $('#out').innerHTML=`<div class="card" id="result"><span class="tag">${esc(cur.c)}</span><h2 style="margin-top:10px">Your prompt is ready</h2><p class="mut" style="margin-top:0">Copy it and paste it into ChatGPT, Gemini or Claude.</p>
+ <button class="btn full" id="cp">${IC.copy} Copy prompt</button>
  ${Object.entries(cur.sections).map(([k,v])=>`<div class="sec"><b>${k}</b><p>${esc(v)}</p></div>`).join('')}
- <div style="margin-top:12px" class="mut">Optional variables</div><div class="row" style="margin-top:6px">${cur.vars.map(x=>`<span class="var">${x}</span>`).join('')}</div>
- <div class="row"><button class="btn sm" id="cp">Copy</button><select id="fd" style="width:auto">${FOLDERS.map(f=>`<option>${f}</option>`).join('')}</select><button class="btn sm ghost" id="sv">Save</button><button class="btn sm ghost" id="en">Enhance</button></div></div>`;
+ ${cur.vars.length?`<p class="hint" style="margin-top:16px">Replace these with your own details before sending:</p><div class="row" style="margin-top:6px">${cur.vars.map(x=>`<span class="var">${x}</span>`).join('')}</div>`:''}
+ <div class="row" style="border-top:1px solid var(--line);padding-top:16px"><label for="fd" style="margin:0;font-size:14px">Save to</label><select id="fd">${FOLDERS.map(f=>`<option>${f}</option>`).join('')}</select><button class="btn sm ghost" id="sv">Save</button><button class="btn sm ghost" id="en">Improve it</button></div></div>`;
  $('#cp').onclick=()=>copy(txt);
  $('#sv').onclick=()=>{const l=S.get(libKey(),[]);l.unshift({id:Date.now(),text:txt,title:cur.src.slice(0,60),folder:$('#fd').value,fav:false});S.set(libKey(),l);toast('Saved to '+$('#fd').value)};
- $('#en').onclick=()=>{S.set('fp_enh',txt);tab='enh';showApp()};tiltInit();
+ $('#en').onclick=()=>{S.set('fp_enh',txt);tab='enh';showApp()};
+ if(matchMedia('(max-width:900px)').matches)$('#result').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function enhView(){
- $('#view').innerHTML=`<div class="grid"><div class="card"><h2 style="margin-top:0">Prompt Enhancer</h2><p class="mut">Paste any prompt. FARVO checks it and fills the gaps.</p><textarea id="pin" style="min-height:200px" placeholder="Paste your prompt here…">${esc(S.get('fp_enh',''))}</textarea><span class="err" id="e_pin"></span><button class="btn full" id="an">Analyze and improve</button></div><div id="eo"></div></div>`;
+ $('#view').innerHTML=head('Improve a prompt','Paste a prompt you already have. We check what is missing and fix it.')+`<div class="grid"><div class="card"><label for="pin" style="margin-top:0">Your prompt</label><textarea id="pin" style="min-height:220px" placeholder="Paste your prompt here…">${esc(S.get('fp_enh',''))}</textarea><span class="err" id="e_pin"></span><button class="btn full" id="an" style="margin-top:8px">${IC.enh} Check and improve</button></div><div id="eo">${emptyOut('Your result will appear here',true)}</div></div>`;
  $('#an').onclick=()=>{const p=v('pin');if(p.length<5)return bad('pin','Paste a prompt first.');const r=score(p);
   let imp=p;if(r.miss.length){const add={Role:'Act as an expert in this subject.',Task:'Complete the task above fully and accurately.','Output format':'Format: clear headings with bullet points.',Constraints:'Do not invent facts. Keep it concise.','Tone / language':'Tone: professional and easy to understand. Respond in English.',Context:'Context: [TOPIC] for [AUDIENCE].'};
    imp=(r.miss.some(x=>x[0]==='Role')?add.Role+'\n\n':'')+p+'\n\n'+r.miss.filter(x=>x[0]!=='Role').map(x=>add[x[0]]||'').join('\n')}
-  $('#eo').innerHTML=`<div class="card tilt"><h3 style="margin-top:0">Prompt strength: ${r.label}</h3><div class="bar"><span style="width:${r.pts/r.max*100}%"></span></div>${r.miss.length?'<ul>'+r.miss.map(x=>`<li>${x[2]}</li>`).join('')+'</ul>':'<p>Nothing important is missing.</p>'}<div class="sec"><b>Improved prompt</b><p>${esc(imp)}</p></div><div class="row"><button class="btn sm" id="c2">Copy improved</button></div></div>`;
-  $('#c2').onclick=()=>copy(imp);tiltInit()};
+  $('#eo').innerHTML=`<div class="card"><h2>Prompt strength: ${r.label}</h2><div class="bar" role="img" aria-label="${r.pts} out of ${r.max}"><span style="width:${r.pts/r.max*100}%"></span></div><p class="hint">${r.pts} of ${r.max} checks passed</p>${r.miss.length?'<p style="margin-bottom:4px"><b>What to add:</b></p><ul style="margin:0;padding-left:20px">'+r.miss.map(x=>`<li>${x[2]}</li>`).join('')+'</ul>':'<p>Nothing important is missing. Nice work.</p>'}<div class="sec"><b>Improved prompt</b><p>${esc(imp)}</p></div><button class="btn full" id="c2">${IC.copy} Copy improved prompt</button></div>`;
+  $('#c2').onclick=()=>copy(imp)};
 }
-/* ---------- 3D SIDE SCENE ---------- */
-function scene3d(){return `<div class="h3d" id="h3d"><div class="pan"><div class="world"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><img class="core" src="${LOGO}" alt=""><div class="fc c1"><b>Role</b>Act as an expert teacher</div><div class="fc c2"><b>Task</b>Create exam notes</div><div class="fc c3"><b>Output</b>Tables and examples</div><div class="fc c4"><b>Tone</b>Simple and friendly</div></div></div><p class="mut cap">Your prompt will appear here</p></div>`}
-function tilt3d(){const h=$('#h3d'),p=$('.pan');if(!h||!p)return;h.onmousemove=e=>{const r=h.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;p.style.transform=`scale(var(--s)) rotateY(${x*34}deg) rotateX(${-y*34}deg)`};h.onmouseleave=()=>p.style.transform=''}
+/* ---------- EMPTY STATE ---------- */
+function emptyOut(t,short){return `<div class="card empty"><img src="${LOGO}" alt="" width="56" height="56" style="border-radius:50%"><h3 style="margin-top:12px">${t}</h3>${short?'':`<ol class="how"><li><b>1</b><div>Write what you need<small>Any language, even Tanglish</small></div></li><li><b>2</b><div>Pick the detail level<small>Or leave it on Auto</small></div></li><li><b>3</b><div>Copy the prompt<small>Paste it into your favourite AI tool</small></div></li></ol>`}</div>`}
 /* ---------- IMAGE -> PROMPT ---------- */
 let imgInfo=null,imgType='Other';
 const ITYPES=['Portrait','Product','Poster','UI screenshot','Website','Architecture','Food','Landscape','Fashion','Artwork','Illustration','Logo','Advertisement','Other'];
@@ -162,16 +185,17 @@ function buildImg(i,t,note,m){
  if(m==='Expert')sec.Variations='Create 3 variations: one realistic, one cinematic and one stylised. Keep the subject and palette the same.';
  return{c:'Image: '+t,sections:sec,vars:['[SUBJECT]','[STYLE]','[ASPECT RATIO]','[AI TOOL]'],src:note||t+' image'}}
 function imgView(){
- $('#view').innerHTML=`<div class="grid"><div class="card"><h2 style="margin-top:0">Image to Prompt</h2><p class="mut">Upload an image. FARVO reads its colours, light and shape and writes an image-generation prompt. Your image stays on your device.</p>
- <label class="drop" for="file">${imgInfo?`<img src="${imgInfo.url}" alt="Preview">`:'<b>Tap to choose an image</b><br><span class="mut">JPG, PNG or WebP</span>'}</label><input id="file" type="file" accept="image/*" style="display:none"><span class="err" id="e_file"></span>
- <label>Image type ${imgInfo?'<span class="mut">(auto-guessed, change if wrong)</span>':''}</label><div class="tabs" id="itypes">${ITYPES.map(t=>`<button class="chip ${imgType===t?'on':''}" data-it="${t}">${t}</button>`).join('')}</div>
- <label for="inote">What is in the image? (optional)</label><input id="inote" placeholder="e.g. a woman in a red saree at sunset">
- <label>Detail level</label><div class="tabs" id="modes">${['Auto','Simple','Professional','Advanced','Expert'].map(m=>`<button class="chip ${gm===m?'on':''}" data-m="${m}">${m}</button>`).join('')}</div>
- <button class="btn full" id="igen">✨ Generate Image Prompt</button></div><div id="out"></div></div>`;
- $('#out').innerHTML=scene3d();tilt3d();if(cur&&String(cur.c).startsWith('Image'))renderOut();document.querySelectorAll('#itypes .chip').forEach(b=>b.onclick=()=>{imgType=b.dataset.it;document.querySelectorAll('#itypes .chip').forEach(x=>x.classList.toggle('on',x===b))});
- document.querySelectorAll('#modes .chip').forEach(b=>b.onclick=()=>{gm=b.dataset.m;document.querySelectorAll('#modes .chip').forEach(x=>x.classList.toggle('on',x===b))});
- $('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/'))return bad('file','Choose an image file (JPG, PNG or WebP).');if(f.size>15e6)return bad('file','Image is too large. Use one under 15 MB.');
-  const url=URL.createObjectURL(f),im=new Image();im.onload=()=>{const note=v('inote');if(imgInfo&&imgInfo.url)URL.revokeObjectURL(imgInfo.url);imgInfo=analyze(im);imgInfo.url=url;imgType=guess(imgInfo);imgView();$('#inote').value=note};im.onerror=()=>bad('file','This image could not be read. Try another file.');im.src=url};
+ $('#view').innerHTML=head('Prompt from an image','Upload a picture. We read its colours, light and shape and write a prompt that can recreate it. The image never leaves your device.')+`<div class="grid"><div class="card"><div class="step"><b>1</b><span>Choose your image</span></div>
+ <label class="drop" for="file" style="margin-top:0">${imgInfo?`<img src="${imgInfo.url}" alt="Preview of your image"><br><span class="small mut">Tap to change image</span>`:`${IC.up}<br><b>Tap to choose an image</b><br><span class="mut small">JPG, PNG or WebP, up to 15 MB</span>`}</label><input id="file" type="file" accept="image/*" style="display:none"><span class="err" id="e_file"></span>
+ <div class="step stepgap"><b>2</b><span>What kind of image is it?</span></div>${imgInfo?'<p class="hint" style="margin:0 0 8px">We guessed this. Change it if it is wrong.</p>':''}<div class="chips" id="itypes">${ITYPES.map(t=>`<button type="button" class="chip ${imgType===t?'on':''}" data-it="${t}">${t}</button>`).join('')}</div>
+ <label for="inote">What is in the image? <span class="mut">(optional)</span></label><input id="inote" placeholder="e.g. a woman in a red saree at sunset">
+ <div class="step stepgap"><b>3</b><span>How detailed should it be?</span></div>${modePick()}
+ <button class="btn full" id="igen" style="margin-top:24px">${IC.gen} Create image prompt</button></div><div id="out"></div></div>`;
+ $('#out').innerHTML=emptyOut('Your image prompt will appear here');if(cur&&String(cur.c).startsWith('Image'))renderOut();
+ document.querySelectorAll('#itypes .chip').forEach(b=>b.onclick=()=>{imgType=b.dataset.it;document.querySelectorAll('#itypes .chip').forEach(x=>x.classList.toggle('on',x===b))});
+ bindModes();
+ $('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/'))return bad('file','Choose an image file (JPG, PNG or WebP).');if(f.size>15e6)return bad('file','This image is too large. Choose one under 15 MB.');
+  const url=URL.createObjectURL(f),im=new Image();im.onload=()=>{const note=v('inote');if(imgInfo&&imgInfo.url)URL.revokeObjectURL(imgInfo.url);imgInfo=analyze(im);imgInfo.url=url;imgType=guess(imgInfo);imgView();$('#inote').value=note};im.onerror=()=>bad('file','We could not read this image. Try another file.');im.src=url};
  $('#igen').onclick=()=>{if(!imgInfo)return bad('file','Upload an image first.');$('#e_file').textContent='';cur=buildImg(imgInfo,imgType,v('inote'),gm);logHist();renderOut()};
 }
 function boot(){S.get('fp_session','')?showApp():showAuth()}
